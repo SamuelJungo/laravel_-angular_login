@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Validator;
+use App\Models\User;
 class AuthController extends Controller
 {
     /**
@@ -31,7 +32,16 @@ class AuthController extends Controller
 
         return $this->respondWithToken($token);
     }
-
+   public function signup(Request $request)
+    {
+        $validated = $request -> validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+        $userData = User::create($request->all());
+        return respose()->json(['message'=>'User created successfully','userData'=>$userData],200); 
+    }
     /**
      * Get the authenticated User.
      *
